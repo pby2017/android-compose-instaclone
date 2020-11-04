@@ -11,7 +11,7 @@ object SampleDataProvider {
             text = "갤럭시",
             author = "안드로이드",
             authorImageResId = R.drawable.baseline_face_black_24,
-            postImageResId = R.drawable.ic_launcher_foreground
+            postImageResId = R.drawable.smartphone
         )
     )
 }

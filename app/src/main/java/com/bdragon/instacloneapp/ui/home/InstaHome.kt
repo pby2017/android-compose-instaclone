@@ -8,10 +8,11 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.imageResource
+import com.bdragon.instacloneapp.R
 import com.bdragon.instacloneapp.data.SampleDataProvider
 
 @Composable
@@ -24,7 +25,7 @@ fun InstaHome() {
                 },
                 navigationIcon = {
                     IconButton(onClick = {}) {
-                        Icon(asset = Icons.Filled.Place)
+                        Icon(asset = imageResource(id = R.drawable.baseline_rowing_black_24))
                     }
                 },
                 actions = {
