@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.IconToggleButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
@@ -71,13 +73,24 @@ private fun PostIconSection() {
                 favoriteState = changedState
             }) {
             val icon = if (favoriteState) Icons.Default.Favorite else Icons.Default.FavoriteBorder
-            Icon(asset = icon)
+            val tint = if (favoriteState) Color.Red else MaterialTheme.colors.onBackground
+            Icon(
+                asset = icon,
+                modifier = Modifier.preferredSize(44.dp),
+                tint = tint
+            )
         }
         IconToggleButton(checked = false, onCheckedChange = {}) {
-            Icon(asset = imageResource(id = R.drawable.baseline_message_black_24))
+            Icon(
+                asset = imageResource(id = R.drawable.baseline_message_black_24),
+                modifier = Modifier.preferredSize(44.dp)
+            )
         }
         IconToggleButton(checked = false, onCheckedChange = {}) {
-            Icon(asset = Icons.Filled.Send)
+            Icon(
+                asset = Icons.Filled.Send,
+                modifier = Modifier.preferredSize(44.dp)
+            )
         }
     }
 }
