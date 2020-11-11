@@ -17,6 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.SpanStyleRange
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.bdragon.instacloneapp.R
@@ -31,6 +35,7 @@ fun InstaPostItem(post: SamplePostItem) {
         PostImageSection(imageResId = post.postImageResId)
         PostIconSection()
         LikesSection(post = post)
+        AuthorContentSection(post = post)
     }
 }
 
@@ -105,10 +110,29 @@ fun LikesSection(post: SamplePostItem) {
         ) {
             Text(
                 text = "좋아요 ${likesCount}개",
-                style = typography.caption,
-                modifier = Modifier.padding(start = 4.dp)
+                modifier = Modifier.padding(start = 4.dp),
+                fontWeight = FontWeight(1000),
+                style = typography.subtitle2
             )
         }
+    }
+}
+
+@Composable
+fun AuthorContentSection(post: SamplePostItem) {
+    Row(
+        modifier = Modifier.padding(start = 8.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val originalText = "${post.author} ${post.text}"
+
+        Text(
+            text = AnnotatedString(
+                text = originalText,
+                spanStyles = getSpanStyles(originalText = originalText, post = post)
+            ),
+            modifier = Modifier.padding(start = 4.dp)
+        )
     }
 }
 
@@ -118,4 +142,56 @@ fun PreviewInstaPostItem() {
     SampleDataProvider.samplePostItemList.getOrNull(1)?.let {
         InstaPostItem(it)
     }
+}
+
+private fun getSpanStyles(originalText: String, post: SamplePostItem): List<SpanStyleRange> {
+    val spanStyles = mutableListOf<SpanStyleRange>()
+
+    // 작성자 닉네임 처리
+    val authorStartIndex = 0
+    val authorEndIndex = post.author.length
+    spanStyles.add(
+        AnnotatedString.Range(
+            SpanStyle(fontWeight = FontWeight(1000)),
+            authorStartIndex,
+            authorEndIndex
+        )
+    )
+
+    // # 태그 처리
+    val contentStartIndex = authorEndIndex + 1
+    var isHashTagText = false
+    var hashTagStartIndex = 0
+    var hashTagEndIndex = 0
+    originalText.toCharArray(startIndex = contentStartIndex).let {
+        val contentLength = it.size
+        it.forEachIndexed { index, char ->
+            if (!isHashTagText && char == '#') {
+                isHashTagText = true
+                hashTagStartIndex = index + contentStartIndex
+            } else if (isHashTagText
+                && (char == '#' || char == ' ' || char == '\n' || index == contentLength - 1)
+            ) {
+                isHashTagText = false
+                hashTagEndIndex = index + contentStartIndex
+                spanStyles.add(
+                    AnnotatedString.Range(
+                        item = SpanStyle(
+                            color = Color.Blue,
+                            fontWeight = FontWeight(1000),
+                        ),
+                        start = hashTagStartIndex,
+                        end = hashTagEndIndex
+                    )
+                )
+
+                if (char == '#') {
+                    isHashTagText = true
+                    hashTagStartIndex = index + contentStartIndex
+                }
+            }
+        }
+    }
+
+    return spanStyles
 }
