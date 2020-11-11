@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
@@ -53,7 +54,9 @@ private fun AuthorInfoSection(post: SamplePostItem) {
 private fun PostImageSection(imageResId: Int) {
     if (imageResId != -1) {
         Image(
-            asset = imageResource(id = imageResId)
+            asset = imageResource(id = imageResId),
+            modifier = Modifier.fillMaxWidth().preferredHeight(450.dp),
+            contentScale = ContentScale.Crop
         )
     }
 }
