@@ -5,5 +5,6 @@ data class SamplePostItem(
     val text: String = "",
     val author: String = "",
     val authorImageResId: Int = -1,
-    val postImageResId: Int = -1
+    val postImageResId: Int = -1,
+    val likesCount: Int = 0
 )

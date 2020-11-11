@@ -27,9 +27,10 @@ import com.bdragon.instacloneapp.ui.typography
 @Composable
 fun InstaPostItem(post: SamplePostItem) {
     Column {
-        AuthorInfoSection(post)
+        AuthorInfoSection(post = post)
         PostImageSection(imageResId = post.postImageResId)
         PostIconSection()
+        LikesSection(post = post)
     }
 }
 
@@ -95,10 +96,26 @@ private fun PostIconSection() {
     }
 }
 
+@Composable
+fun LikesSection(post: SamplePostItem) {
+    post.likesCount.takeIf { it > 0 }?.let { likesCount ->
+        Row(
+            modifier = Modifier.padding(start = 8.dp).fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "좋아요 ${likesCount}개",
+                style = typography.caption,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewInstaPostItem() {
-    SampleDataProvider.samplePostItemList.getOrNull(0)?.let {
+    SampleDataProvider.samplePostItemList.getOrNull(1)?.let {
         InstaPostItem(it)
     }
 }
