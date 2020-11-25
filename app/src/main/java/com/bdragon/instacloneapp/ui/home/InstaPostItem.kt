@@ -11,7 +11,11 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,16 +28,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.bdragon.instacloneapp.R
-import com.bdragon.instacloneapp.data.SampleDataProvider
 import com.bdragon.instacloneapp.data.model.SamplePostItem
 import com.bdragon.instacloneapp.ui.typography
+import com.bdragon.instacloneapp.viewmodel.InstaHomeViewModel
 
 @Composable
-fun InstaPostItem(post: SamplePostItem) {
+fun InstaPostItem(instaHomeViewModel: InstaHomeViewModel, post: SamplePostItem) {
     Column {
         AuthorInfoSection(post = post)
         PostImageSection(imageResId = post.postImageResId)
-        PostIconSection()
+        PostIconSection(
+            favoriteState = post.favoriteState
+        ) { favoriteState ->
+            instaHomeViewModel.onFavoriteClicked(postId = post.id, favoriteState = favoriteState)
+        }
         LikesSection(post = post)
         AuthorContentSection(post = post)
     }
@@ -70,16 +78,21 @@ private fun PostImageSection(imageResId: Int) {
 }
 
 @Composable
-private fun PostIconSection() {
+private fun PostIconSection(
+    favoriteState: Boolean,
+    onFavoriteClicked: (Boolean) -> Unit
+) {
     Row {
-        var favoriteState by remember { mutableStateOf(false) }
+        var favoriteStateRemember by remember { mutableStateOf(favoriteState) }
+
         IconToggleButton(
-            checked = favoriteState,
+            checked = favoriteStateRemember,
             onCheckedChange = { changedState ->
-                favoriteState = changedState
+                onFavoriteClicked(changedState)
+                favoriteStateRemember = changedState
             }) {
-            val icon = if (favoriteState) Icons.Default.Favorite else Icons.Default.FavoriteBorder
-            val tint = if (favoriteState) Color.Red else MaterialTheme.colors.onBackground
+            val icon = if (favoriteStateRemember) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+            val tint = if (favoriteStateRemember) Color.Red else MaterialTheme.colors.onBackground
             Icon(
                 asset = icon,
                 modifier = Modifier.preferredSize(44.dp),
@@ -139,9 +152,9 @@ fun AuthorContentSection(post: SamplePostItem) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewInstaPostItem() {
-    SampleDataProvider.samplePostItemList.getOrNull(1)?.let {
-        InstaPostItem(it)
-    }
+//    SampleDataProvider.samplePostItemList.getOrNull(1)?.let {
+//        InstaPostItem(it)
+//    }
 }
 
 private fun getSpanStyles(originalText: String, post: SamplePostItem): List<SpanStyleRange> {
@@ -152,13 +165,13 @@ private fun getSpanStyles(originalText: String, post: SamplePostItem): List<Span
     val authorEndIndex = post.author.length
     spanStyles.add(
         AnnotatedString.Range(
-            SpanStyle(fontWeight = FontWeight(1000)),
+            SpanStyle(fontWeight = FontWeight(1000)),  // bode
             authorStartIndex,
             authorEndIndex
         )
     )
 
-    // # 태그 처리
+    // # 해시태그 처리 (클릭어떻게할지)
     val contentStartIndex = authorEndIndex + 1
     var isHashTagText = false
     var hashTagStartIndex = 0

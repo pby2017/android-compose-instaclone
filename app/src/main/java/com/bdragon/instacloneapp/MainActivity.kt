@@ -7,13 +7,17 @@ import androidx.compose.ui.platform.setContent
 import androidx.ui.tooling.preview.Preview
 import com.bdragon.instacloneapp.ui.InstaCloneAppTheme
 import com.bdragon.instacloneapp.ui.home.InstaHome
+import com.bdragon.instacloneapp.viewmodel.InstaHomeViewModel
 
 class MainActivity : AppCompatActivity() {
+    private val instaHomeViewModel = InstaHomeViewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             InstaCloneAppTheme {
-                InstaContent()
+                InstaContent(instaHomeViewModel)
             }
         }
     }
@@ -22,13 +26,15 @@ class MainActivity : AppCompatActivity() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    InstaCloneAppTheme {
-        InstaContent()
-    }
+    val instaHomeViewModel = InstaHomeViewModel()
+
+//    InstaCloneAppTheme {
+//        InstaContent(instaHomeViewModel)
+//    }
 }
 
 @Composable
-fun InstaContent() {
-    InstaHome()
+fun InstaContent(instaHomeViewModel: InstaHomeViewModel) {
+    InstaHome(instaHomeViewModel)
 }
 

@@ -11,6 +11,7 @@ object SampleDataProvider {
         author = "안드로이드",
         authorImageResId = R.drawable.baseline_face_black_24,
         postImageResId = R.drawable.smartphone,
+        postImageResUrl = "",
         likesCount = 0
     )
 
