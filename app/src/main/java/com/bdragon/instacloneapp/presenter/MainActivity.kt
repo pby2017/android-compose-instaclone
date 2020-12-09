@@ -1,13 +1,13 @@
-package com.bdragon.instacloneapp
+package com.bdragon.instacloneapp.presenter
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.setContent
 import androidx.ui.tooling.preview.Preview
-import com.bdragon.instacloneapp.ui.InstaCloneAppTheme
-import com.bdragon.instacloneapp.ui.home.InstaHome
-import com.bdragon.instacloneapp.viewmodel.InstaHomeViewModel
+import com.bdragon.instacloneapp.presenter.ui.InstaCloneAppTheme
+import com.bdragon.instacloneapp.presenter.ui.home.InstaHome
+import com.bdragon.instacloneapp.presenter.viewmodel.InstaHomeViewModel
 
 class MainActivity : AppCompatActivity() {
     private val instaHomeViewModel = InstaHomeViewModel()

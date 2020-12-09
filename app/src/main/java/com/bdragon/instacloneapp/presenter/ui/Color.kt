@@ -1,4 +1,4 @@
-package com.bdragon.instacloneapp.ui
+package com.bdragon.instacloneapp.presenter.ui
 
 import androidx.compose.ui.graphics.Color
 

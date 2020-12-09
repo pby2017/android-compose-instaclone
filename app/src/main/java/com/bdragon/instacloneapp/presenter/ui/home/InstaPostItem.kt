@@ -1,21 +1,18 @@
-package com.bdragon.instacloneapp.ui.home
+package com.bdragon.instacloneapp.presenter.ui.home
 
-import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.IconToggleButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.bdragon.instacloneapp.R
 import com.bdragon.instacloneapp.data.model.SamplePostItem
-import com.bdragon.instacloneapp.ui.typography
-import com.bdragon.instacloneapp.viewmodel.InstaHomeViewModel
+import com.bdragon.instacloneapp.presenter.ui.typography
+import com.bdragon.instacloneapp.presenter.viewmodel.InstaHomeViewModel
 
 @Composable
 fun InstaPostItem(instaHomeViewModel: InstaHomeViewModel, post: SamplePostItem) {
@@ -38,12 +35,20 @@ fun InstaPostItem(instaHomeViewModel: InstaHomeViewModel, post: SamplePostItem) 
         AuthorInfoSection(post = post)
         PostImageSection(imageResId = post.postImageResId)
         PostIconSection(
-            favoriteState = post.favoriteState
-        ) { favoriteState ->
-            instaHomeViewModel.onFavoriteClicked(postId = post.id, favoriteState = favoriteState)
-        }
+            favoriteState = post.favoriteState,
+            onFavoriteClicked = { favoriteState ->
+                instaHomeViewModel.onFavoriteClicked(
+                    postId = post.id,
+                    favoriteState = favoriteState
+                )
+            }
+        )
         LikesSection(post = post)
-        AuthorContentSection(post = post)
+        AuthorContentSection(
+            post = post,
+            onShowEditContentDialogClick = {
+                instaHomeViewModel.onContentClick(postId = post.id)
+            })
     }
 }
 
@@ -91,7 +96,8 @@ private fun PostIconSection(
                 onFavoriteClicked(changedState)
                 favoriteStateRemember = changedState
             }) {
-            val icon = if (favoriteStateRemember) Icons.Default.Favorite else Icons.Default.FavoriteBorder
+            val icon =
+                if (favoriteStateRemember) Icons.Default.Favorite else Icons.Default.FavoriteBorder
             val tint = if (favoriteStateRemember) Color.Red else MaterialTheme.colors.onBackground
             Icon(
                 asset = icon,
@@ -132,7 +138,10 @@ fun LikesSection(post: SamplePostItem) {
 }
 
 @Composable
-fun AuthorContentSection(post: SamplePostItem) {
+fun AuthorContentSection(
+    post: SamplePostItem,
+    onShowEditContentDialogClick: () -> Unit
+) {
     Row(
         modifier = Modifier.padding(start = 8.dp).fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -145,6 +154,7 @@ fun AuthorContentSection(post: SamplePostItem) {
                 spanStyles = getSpanStyles(originalText = originalText, post = post)
             ),
             modifier = Modifier.padding(start = 4.dp)
+                .clickable(onClick = { onShowEditContentDialogClick() })
         )
     }
 }

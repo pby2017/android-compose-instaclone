@@ -1,5 +1,7 @@
-package com.bdragon.instacloneapp.viewmodel
+package com.bdragon.instacloneapp.presenter.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +16,12 @@ class InstaHomeViewModel : ViewModel() {
 
     private val _postListLiveData = MutableLiveData<List<SamplePostItem>>()
     val postListLiveData: LiveData<List<SamplePostItem>> = _postListLiveData
+
+    private val _showEditContentDialog = MutableLiveData<Boolean>()
+    val showEditContentDialog: LiveData<Boolean> = _showEditContentDialog
+
+    private val _contentToEditInDialog = MutableLiveData<String>()
+    val contentToEditInDialog: LiveData<String> = _contentToEditInDialog
 
     init {
         _postListLiveData.value = postList
@@ -50,5 +58,32 @@ class InstaHomeViewModel : ViewModel() {
             addAll(newPostList)
         }
         _postListLiveData.value = newPostList
+    }
+
+    fun onContentClick(postId: Int) {
+        postList.find { it.id == postId }?.let {
+            setContentToEditInDialog(it.text)
+            showEditContentDialog()
+        } ?: run {
+            setContentToEditInDialog(content = "")
+            hideEditContentDialog()
+        }
+    }
+
+    fun setContentToEditInDialog(content: String) {
+        _contentToEditInDialog.value = content
+    }
+
+    fun showEditContentDialog() {
+        _showEditContentDialog.value = true
+    }
+
+    fun hideEditContentDialog() {
+        _showEditContentDialog.value = false
+    }
+
+    fun onCompleteEditContentClick() {
+        val contentToEditInDialog = _contentToEditInDialog.value
+
     }
 }

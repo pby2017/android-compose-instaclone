@@ -1,12 +1,9 @@
-package com.bdragon.instacloneapp.ui.home
+package com.bdragon.instacloneapp.presenter.ui.home
 
 import androidx.compose.foundation.Icon
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumnFor
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
@@ -15,7 +12,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.imageResource
 import com.bdragon.instacloneapp.R
 import com.bdragon.instacloneapp.data.model.SamplePostItem
-import com.bdragon.instacloneapp.viewmodel.InstaHomeViewModel
+import com.bdragon.instacloneapp.presenter.viewmodel.InstaHomeViewModel
 
 @Composable
 fun InstaHome(instaHomeViewModel: InstaHomeViewModel) {
@@ -47,6 +44,7 @@ fun InstaHomeContent(instaHomeViewModel: InstaHomeViewModel) {
     Column {
         // todo : insta story section
         InstaPostsList(instaHomeViewModel)
+        AddCommentDialog(instaHomeViewModel)
     }
 }
 
@@ -59,5 +57,39 @@ fun InstaPostsList(instaHomeViewModel: InstaHomeViewModel) {
         postList.find { it.id == postId }?.let { postItem ->
             InstaPostItem(instaHomeViewModel, postItem)
         }
+    }
+}
+
+@Composable
+fun AddCommentDialog(instaHomeViewModel: InstaHomeViewModel) {
+    val isShowAddCommentDialog: Boolean by instaHomeViewModel.showEditContentDialog.observeAsState(
+        false
+    )
+    val contentToEditInDialog: String by instaHomeViewModel.contentToEditInDialog.observeAsState("")
+
+    if (isShowAddCommentDialog) {
+        AlertDialog(
+            confirmButton = {
+                Button(onClick = {
+                    instaHomeViewModel.onCompleteEditContentClick()
+                }) { Text("등록") }
+            },
+            dismissButton = {
+                Button(onClick = {
+                    instaHomeViewModel.hideEditContentDialog()
+                }) { Text("취소") }
+            },
+            onDismissRequest = {
+                instaHomeViewModel.hideEditContentDialog()
+            },
+            text = {
+                TextField(
+                    value = contentToEditInDialog,
+                    onValueChange = { newText ->
+                        instaHomeViewModel.setContentToEditInDialog(content = newText)
+                    }
+                )
+            }
+        )
     }
 }
