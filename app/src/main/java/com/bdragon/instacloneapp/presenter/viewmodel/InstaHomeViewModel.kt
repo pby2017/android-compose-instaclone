@@ -1,7 +1,5 @@
 package com.bdragon.instacloneapp.presenter.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,6 +21,9 @@ class InstaHomeViewModel : ViewModel() {
     private val _contentToEditInDialog = MutableLiveData<String>()
     val contentToEditInDialog: LiveData<String> = _contentToEditInDialog
 
+    private val _postIdToEditInDialog = MutableLiveData<Int>()
+    val postIdToEditInDialog: LiveData<Int> = _postIdToEditInDialog
+
     init {
         _postListLiveData.value = postList
     }
@@ -38,16 +39,7 @@ class InstaHomeViewModel : ViewModel() {
             if (it.id == postId) {
                 val likesCount = if (favoriteState) it.likesCount + 1 else it.likesCount
 
-                it.copy(
-                    id = it.id,
-                    text = it.text,
-                    author = it.author,
-                    authorImageResId = it.authorImageResId,
-                    postImageResId = it.postImageResId,
-                    postImageResUrl = it.postImageResUrl,
-                    likesCount = likesCount,
-                    favoriteState = favoriteState
-                )
+                it.copyPostItem(likesCount = likesCount, favoriteState = favoriteState)
             } else {
                 it
             }
@@ -62,12 +54,18 @@ class InstaHomeViewModel : ViewModel() {
 
     fun onContentClick(postId: Int) {
         postList.find { it.id == postId }?.let {
-            setContentToEditInDialog(it.text)
+            setPostIdToEditInDialog(postId = it.id)
+            setContentToEditInDialog(content = it.text)
             showEditContentDialog()
         } ?: run {
+            setPostIdToEditInDialog(postId = -1)
             setContentToEditInDialog(content = "")
             hideEditContentDialog()
         }
+    }
+
+    fun setPostIdToEditInDialog(postId: Int) {
+        _postIdToEditInDialog.value = postId
     }
 
     fun setContentToEditInDialog(content: String) {
@@ -82,8 +80,41 @@ class InstaHomeViewModel : ViewModel() {
         _showEditContentDialog.value = false
     }
 
-    fun onCompleteEditContentClick() {
-        val contentToEditInDialog = _contentToEditInDialog.value
+    fun onCompleteEditContentClick(postId: Int, content: String) {
+        val newPostList = postList.map {
+            if (it.id == postId) {
+                it.copyPostItem(text = content)
+            } else {
+                it
+            }
+        }
 
+        postList.run {
+            clear()
+            addAll(newPostList)
+        }
+        _postListLiveData.value = newPostList
+    }
+
+    private fun SamplePostItem.copyPostItem(
+        id: Int? = null,
+        text: String? = null,
+        author: String? = null,
+        authorImageResId: Int? = null,
+        postImageResId: Int? = null,
+        postImageResUrl: String? = null,
+        likesCount: Int? = null,
+        favoriteState: Boolean? = null
+    ): SamplePostItem {
+        return this.copy(
+            id = id ?: this.id,
+            text = text ?: this.text,
+            author = author ?: this.author,
+            authorImageResId = authorImageResId ?: this.authorImageResId,
+            postImageResId = postImageResId ?: this.postImageResId,
+            postImageResUrl = postImageResUrl ?: this.postImageResUrl,
+            likesCount = likesCount ?: this.likesCount,
+            favoriteState = favoriteState ?: this.favoriteState
+        )
     }
 }

@@ -66,12 +66,13 @@ fun AddCommentDialog(instaHomeViewModel: InstaHomeViewModel) {
         false
     )
     val contentToEditInDialog: String by instaHomeViewModel.contentToEditInDialog.observeAsState("")
+    val postIdToEditInDialog: Int by instaHomeViewModel.postIdToEditInDialog.observeAsState(-1)
 
     if (isShowAddCommentDialog) {
         AlertDialog(
             confirmButton = {
                 Button(onClick = {
-                    instaHomeViewModel.onCompleteEditContentClick()
+                    instaHomeViewModel.onCompleteEditContentClick(postId = postIdToEditInDialog, content = contentToEditInDialog)
                 }) { Text("등록") }
             },
             dismissButton = {
