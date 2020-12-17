@@ -1,6 +1,6 @@
 package com.bdragon.instacloneapp.presenter.ui.home
 
-import androidx.compose.foundation.Icon
+import androidx.compose.material.Icon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.material.*
@@ -24,12 +24,12 @@ fun InstaHome(instaHomeViewModel: InstaHomeViewModel) {
                 },
                 navigationIcon = {
                     IconButton(onClick = {}) {
-                        Icon(asset = imageResource(id = R.drawable.baseline_rowing_black_24))
+                        Icon(bitmap = imageResource(id = R.drawable.baseline_rowing_black_24))
                     }
                 },
                 actions = {
                     IconButton(onClick = {}) {
-                        Icon(asset = Icons.Filled.Send)
+                        Icon(imageVector = Icons.Filled.Send)
                     }
                 }
             )
@@ -67,7 +67,7 @@ fun AddCommentDialog(instaHomeViewModel: InstaHomeViewModel) {
     )
     val contentToEditInDialog: String by instaHomeViewModel.contentToEditInDialog.observeAsState("")
     val postIdToEditInDialog: Int by instaHomeViewModel.postIdToEditInDialog.observeAsState(-1)
-
+// side effect
     if (isShowAddCommentDialog) {
         AlertDialog(
             confirmButton = {

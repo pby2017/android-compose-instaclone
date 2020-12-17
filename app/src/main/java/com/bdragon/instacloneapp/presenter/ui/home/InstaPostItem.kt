@@ -59,7 +59,7 @@ private fun AuthorInfoSection(post: SamplePostItem) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            asset = imageResource(id = post.authorImageResId),
+            bitmap = imageResource(id = post.authorImageResId),
             modifier = Modifier.preferredSize(32.dp)
         )
         Text(
@@ -67,7 +67,7 @@ private fun AuthorInfoSection(post: SamplePostItem) {
             style = typography.body1,
             modifier = Modifier.padding(8.dp).weight(1f)
         )
-        Icon(asset = Icons.Default.MoreVert)
+        Icon(imageVector = Icons.Default.MoreVert)
     }
 }
 
@@ -75,7 +75,7 @@ private fun AuthorInfoSection(post: SamplePostItem) {
 private fun PostImageSection(imageResId: Int) {
     if (imageResId != -1) {
         Image(
-            asset = imageResource(id = imageResId),
+            bitmap = imageResource(id = imageResId),
             modifier = Modifier.fillMaxWidth().preferredHeight(450.dp),
             contentScale = ContentScale.Crop
         )
@@ -100,20 +100,20 @@ private fun PostIconSection(
                 if (favoriteStateRemember) Icons.Default.Favorite else Icons.Default.FavoriteBorder
             val tint = if (favoriteStateRemember) Color.Red else MaterialTheme.colors.onBackground
             Icon(
-                asset = icon,
+                imageVector = icon,
                 modifier = Modifier.preferredSize(44.dp),
                 tint = tint
             )
         }
         IconToggleButton(checked = false, onCheckedChange = {}) {
             Icon(
-                asset = imageResource(id = R.drawable.baseline_message_black_24),
+                bitmap = imageResource(id = R.drawable.baseline_message_black_24),
                 modifier = Modifier.preferredSize(44.dp)
             )
         }
         IconToggleButton(checked = false, onCheckedChange = {}) {
             Icon(
-                asset = Icons.Filled.Send,
+                imageVector = Icons.Filled.Send,
                 modifier = Modifier.preferredSize(44.dp)
             )
         }
