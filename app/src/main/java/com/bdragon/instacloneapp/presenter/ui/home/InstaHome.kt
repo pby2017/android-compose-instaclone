@@ -1,6 +1,5 @@
 package com.bdragon.instacloneapp.presenter.ui.home
 
-import androidx.compose.material.Icon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.material.*
@@ -11,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.res.imageResource
 import com.bdragon.instacloneapp.R
-import com.bdragon.instacloneapp.data.model.SamplePostItem
 import com.bdragon.instacloneapp.presenter.viewmodel.InstaHomeViewModel
 
 @Composable
@@ -50,13 +48,11 @@ fun InstaHomeContent(instaHomeViewModel: InstaHomeViewModel) {
 
 @Composable
 fun InstaPostsList(instaHomeViewModel: InstaHomeViewModel) {
-    val postList: List<SamplePostItem> by instaHomeViewModel.postListLiveData.observeAsState(listOf())
     val postIdList = instaHomeViewModel.getPostIdList()
 
     LazyColumnFor(items = postIdList) { postId ->
-        postList.find { it.id == postId }?.let { postItem ->
-            InstaPostItem(instaHomeViewModel, postItem)
-        }
+        val post = instaHomeViewModel.getPostById(postId = postId)
+        InstaPostItem(instaHomeViewModel = instaHomeViewModel, samplePostItem = post)
     }
 }
 
@@ -72,7 +68,10 @@ fun AddCommentDialog(instaHomeViewModel: InstaHomeViewModel) {
         AlertDialog(
             confirmButton = {
                 Button(onClick = {
-                    instaHomeViewModel.onCompleteEditContentClick(postId = postIdToEditInDialog, content = contentToEditInDialog)
+                    instaHomeViewModel.onCompleteEditContentClick(
+                        postId = postIdToEditInDialog,
+                        content = contentToEditInDialog
+                    )
                 }) { Text("등록") }
             },
             dismissButton = {

@@ -12,8 +12,8 @@ class InstaHomeViewModel : ViewModel() {
         addAll(SampleDataProvider.samplePostItemList.filter { it.postImageResId != -1 })
     }
 
-    private val _postListLiveData = MutableLiveData<List<SamplePostItem>>()
-    val postListLiveData: LiveData<List<SamplePostItem>> = _postListLiveData
+    private val _changedPostLiveData = MutableLiveData<SamplePostItem>()
+    val changedPostLiveData: LiveData<SamplePostItem> = _changedPostLiveData
 
     private val _showEditContentDialog = MutableLiveData<Boolean>()
     val showEditContentDialog: LiveData<Boolean> = _showEditContentDialog
@@ -24,15 +24,10 @@ class InstaHomeViewModel : ViewModel() {
     private val _postIdToEditInDialog = MutableLiveData<Int>()
     val postIdToEditInDialog: LiveData<Int> = _postIdToEditInDialog
 
-    init {
-        _postListLiveData.value = postList
-    }
+    fun getPostIdList(): List<Int> = postList.map { it.id }
 
-    fun getPostIdList(): List<Int> {
-        return postList.map {
-            it.id
-        }
-    }
+    fun getPostById(postId: Int): SamplePostItem =
+        postList.find { it.id == postId } ?: SamplePostItem()
 
     fun onFavoriteClicked(postId: Int, favoriteState: Boolean) {
         val newPostList = postList.map {
@@ -40,6 +35,9 @@ class InstaHomeViewModel : ViewModel() {
                 val likesCount = if (favoriteState) it.likesCount + 1 else it.likesCount
 
                 it.copyPostItem(likesCount = likesCount, favoriteState = favoriteState)
+                    .also { changedPost ->
+                        _changedPostLiveData.value = changedPost
+                    }
             } else {
                 it
             }
@@ -49,7 +47,7 @@ class InstaHomeViewModel : ViewModel() {
             clear()
             addAll(newPostList)
         }
-        _postListLiveData.value = newPostList
+
     }
 
     fun onContentClick(postId: Int) {
@@ -64,7 +62,7 @@ class InstaHomeViewModel : ViewModel() {
         }
     }
 
-    fun setPostIdToEditInDialog(postId: Int) {
+    private fun setPostIdToEditInDialog(postId: Int) {
         _postIdToEditInDialog.value = postId
     }
 
@@ -72,7 +70,7 @@ class InstaHomeViewModel : ViewModel() {
         _contentToEditInDialog.value = content
     }
 
-    fun showEditContentDialog() {
+    private fun showEditContentDialog() {
         _showEditContentDialog.value = true
     }
 
@@ -83,7 +81,9 @@ class InstaHomeViewModel : ViewModel() {
     fun onCompleteEditContentClick(postId: Int, content: String) {
         val newPostList = postList.map {
             if (it.id == postId) {
-                it.copyPostItem(text = content)
+                it.copyPostItem(text = content).also { changedPost ->
+                    _changedPostLiveData.value = changedPost
+                }
             } else {
                 it
             }
@@ -93,7 +93,7 @@ class InstaHomeViewModel : ViewModel() {
             clear()
             addAll(newPostList)
         }
-        _postListLiveData.value = newPostList
+        hideEditContentDialog()
     }
 
     private fun SamplePostItem.copyPostItem(

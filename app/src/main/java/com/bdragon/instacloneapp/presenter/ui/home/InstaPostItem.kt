@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,8 +31,13 @@ import com.bdragon.instacloneapp.presenter.ui.typography
 import com.bdragon.instacloneapp.presenter.viewmodel.InstaHomeViewModel
 
 @Composable
-fun InstaPostItem(instaHomeViewModel: InstaHomeViewModel, post: SamplePostItem) {
+fun InstaPostItem(instaHomeViewModel: InstaHomeViewModel, samplePostItem: SamplePostItem) {
     Column {
+        val changedPost: SamplePostItem by instaHomeViewModel.changedPostLiveData.observeAsState(
+            SamplePostItem()
+        )
+        val post = changedPost.takeIf { it.id == samplePostItem.id } ?: samplePostItem
+
         AuthorInfoSection(post = post)
         PostImageSection(imageResId = post.postImageResId)
         PostIconSection(
@@ -48,7 +54,8 @@ fun InstaPostItem(instaHomeViewModel: InstaHomeViewModel, post: SamplePostItem) 
             post = post,
             onShowEditContentDialogClick = {
                 instaHomeViewModel.onContentClick(postId = post.id)
-            })
+            }
+        )
     }
 }
 
