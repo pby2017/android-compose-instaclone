@@ -34,7 +34,7 @@ class InstaHomeViewModel : ViewModel() {
             if (it.id == postId) {
                 val likesCount = if (favoriteState) it.likesCount + 1 else it.likesCount
 
-                it.copyPostItem(likesCount = likesCount, favoriteState = favoriteState)
+                it.copy(likesCount = likesCount, favoriteState = favoriteState)
                     .also { changedPost ->
                         _changedPostLiveData.value = changedPost
                     }
@@ -81,7 +81,7 @@ class InstaHomeViewModel : ViewModel() {
     fun onCompleteEditContentClick(postId: Int, content: String) {
         val newPostList = postList.map {
             if (it.id == postId) {
-                it.copyPostItem(text = content).also { changedPost ->
+                it.copy(text = content).also { changedPost ->
                     _changedPostLiveData.value = changedPost
                 }
             } else {
@@ -95,26 +95,6 @@ class InstaHomeViewModel : ViewModel() {
         }
         hideEditContentDialog()
     }
-
-    private fun SamplePostItem.copyPostItem(
-        id: Int? = null,
-        text: String? = null,
-        author: String? = null,
-        authorImageResId: Int? = null,
-        postImageResId: Int? = null,
-        postImageResUrl: String? = null,
-        likesCount: Int? = null,
-        favoriteState: Boolean? = null
-    ): SamplePostItem {
-        return this.copy(
-            id = id ?: this.id,
-            text = text ?: this.text,
-            author = author ?: this.author,
-            authorImageResId = authorImageResId ?: this.authorImageResId,
-            postImageResId = postImageResId ?: this.postImageResId,
-            postImageResUrl = postImageResUrl ?: this.postImageResUrl,
-            likesCount = likesCount ?: this.likesCount,
-            favoriteState = favoriteState ?: this.favoriteState
-        )
-    }
 }
+// 리스트를 업데이트할 경우, 함수형측면에서 리스트를 새로 만드는 방법 사용하기
+// 현재 favorite 변수로 판단을 하는데, favorite 리스트를 따로 만들어서 관리하는 방법도 권장
